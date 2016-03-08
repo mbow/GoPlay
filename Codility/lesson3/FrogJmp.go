@@ -20,6 +20,7 @@ func main() {
 	fmt.Println(Solution(X, Y, D))
 
 }
+
 // 100% on first go.
 func Solution(x int, y int, d int) int {
 
