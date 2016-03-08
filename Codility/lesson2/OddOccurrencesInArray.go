@@ -8,6 +8,7 @@ func main() {
 	fmt.Println("->", SolutionB(A))
 	fmt.Println("->", SolutionC(A))
 }
+
 // My way 100% correct but 25% on performance
 // Solution is to run two nested loops. The outer loop picks all elements one by one and inner loop counts number
 // of occurrences of the element picked by outer loop
@@ -26,6 +27,7 @@ func SolutionB(A []int) int {
 	}
 	return -1
 }
+
 // Best way
 // Correct way that gets 100% http://www.geeksforgeeks.org/find-the-number-occurring-odd-number-of-times/
 // The Best Solution is to do bitwise XOR of all the elements. XOR of all elements gives us odd occurring element.
