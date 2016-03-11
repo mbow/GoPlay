@@ -6,32 +6,52 @@ import (
 	"sort"
 )
 
-func main() {
-
-	//A := []int{1, 5, 3, 3, 7} //true
-	//A := []int{1, 5, 3, 3, 3, 3, 3, 3, 3, 3, 7} //true
-	//A := []int{1, 5, 3, 3, 3, 7, 3, 3, 3, 3, 7} //false
-	A := []int{6, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7} //true
-	//A := []int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7} //true
-	//A := []int{1, 2, 3, 3, 3, 3, 3, 3, 3, 7, 5} //true
-	//A := []int{7, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5} // true
-	//A := []int{2, 3, 7, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5} //true
-	//A := []int{1, 2, 4, 3, 7} //true
-	//A := []int{1, 3, 5} //true
-	//A := []int{1} //true
-	//A := []int{0} //true
-	//A := []int{1, 0} //true
-	//A := []int{0, 1} // true
-	//A := []int{1, 5, 3, 4, 7} //true
-
-	//fmt.Println(Solution4(A))
-	fmt.Println(A, ":A:")
-	fmt.Println("RESULT=", swapSort(A))
+type tests struct {
+	num  int
+	in   []int
+	want bool
 }
 
-//fmt.Println(list[next], "==", list[next+toShift], "||", list[next]+1, "==", list[next+toShift])
-//if list[next] == list[next+toShift] || list[next]+1 == list[next+toShift] {
-//
+var testData = []tests{
+	{1, []int{0}, true},
+	{2, []int{0, 1}, true},
+	{3, []int{0, 0}, true},
+	{4, []int{1, 0}, true},
+	{5, []int{1, 1}, true},
+	{6, []int{1, 2, 3}, true},
+	{7, []int{3, 2, 1}, true}, //<------To do still failed
+	{8, []int{1, 2, 1}, true},
+	{9, []int{2, 1, 1}, true},
+	{10, []int{1, 3, 2, 4}, true},
+	{11, []int{1, 2, 4, 3}, true},
+	{12, []int{1, 4, 3, 2}, false},
+	{13, []int{1, 3, 4, 2}, false},
+	{14, []int{1, 5, 3, 3, 7}, true},
+	{15, []int{1, 5, 3, 3, 3, 3, 3, 3, 3, 3, 7}, true},
+	{16, []int{1, 5, 3, 3, 3, 7, 3, 3, 3, 3, 7}, false},
+	{17, []int{6, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7}, true},
+	{18, []int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7}, true},
+	{19, []int{1, 2, 3, 3, 3, 3, 3, 3, 3, 7, 5}, true},
+	{20, []int{7, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5}, true},
+	{21, []int{2, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5}, true},
+	{22, []int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7}, true},
+	{23, []int{1, 5, 3, 4, 7}, true},
+}
+
+func main() {
+
+	//total := 0
+	input := testData
+	for _, v := range input {
+		//fmt.Println("TEST", v.num)
+		if swapSort(v.in) == v.want {
+			fmt.Println("TEST", v.num, "TRUE:PASSED")
+		} else {
+			fmt.Println("TEST", v.num, "FAILLED")
+		}
+	}
+}
+
 func swapSort(list []int) bool {
 
 	if sort.IntsAreSorted(list) {
@@ -55,6 +75,9 @@ func swapSort(list []int) bool {
 			for k := i + 1; k < len(list)-1; k++ {
 				//fmt.Println(list[k], "==", list[k+1], "or", list[k]+1, "==", list[k+1], ":A")
 				if list[k] == list[k+1] || list[k]+1 == list[k+1] {
+					if list[i] == list[k+1] {
+						break
+					}
 					dup++
 				} else {
 					break
