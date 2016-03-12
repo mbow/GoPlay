@@ -7,52 +7,86 @@ import (
 )
 
 type tests struct {
-	num  int
 	in   []int
 	want bool
 }
 
 var testData = []tests{
-	{1, []int{0}, true},
-	{2, []int{0, 1}, true},
-	{3, []int{0, 0}, true},
-	{4, []int{1, 0}, true},
-	{5, []int{1, 1}, true},
-	{6, []int{1, 2, 3}, true},
-	{7, []int{3, 2, 1}, true}, //<------To do still failed
-	{8, []int{1, 2, 1}, true},
-	{9, []int{2, 1, 1}, true},
-	{10, []int{1, 3, 2, 4}, true},
-	{11, []int{1, 2, 4, 3}, true},
-	{12, []int{1, 4, 3, 2}, false},
-	{13, []int{1, 3, 4, 2}, false},
-	{14, []int{1, 5, 3, 3, 7}, true},
-	{15, []int{1, 5, 3, 3, 3, 3, 3, 3, 3, 3, 7}, true},
-	{16, []int{1, 5, 3, 3, 3, 7, 3, 3, 3, 3, 7}, false},
-	{17, []int{6, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7}, true},
-	{18, []int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7}, true},
-	{19, []int{1, 2, 3, 3, 3, 3, 3, 3, 3, 7, 5}, true},
-	{20, []int{7, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5}, true},
-	{21, []int{2, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5}, true},
-	{22, []int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7}, true},
-	{23, []int{1, 5, 3, 4, 7}, true},
+	{[]int{1}, true},        //0
+	{[]int{1, 1}, true},     //1
+	{[]int{1, 2}, true},     //2
+	{[]int{2, 1}, true},     //3
+	{[]int{2, 2}, true},     //4
+	{[]int{1, 1, 1}, true},  //5
+	{[]int{1, 1, 2}, true},  //6
+	{[]int{1, 2, 1}, true},  //7
+	{[]int{1, 2, 2}, true},  //8
+	{[]int{1, 2, 3}, true},  //9
+	{[]int{1, 3, 1}, true},  //10
+	{[]int{1, 3, 2}, true},  //11
+	{[]int{1, 3, 3}, true},  //12
+	{[]int{2, 1, 1}, true},  //13
+	{[]int{2, 1, 2}, true},  //14
+	{[]int{2, 1, 3}, true},  //15
+	{[]int{2, 2, 1}, true},  //16
+	{[]int{2, 2, 3}, true},  //17
+	{[]int{2, 3, 1}, false}, //18
+	{[]int{2, 3, 2}, true},  //19
+	{[]int{2, 3, 3}, true},  //20
+	{[]int{3, 1, 1}, true},  //21
+	{[]int{3, 1, 2}, false}, //22
+	{[]int{3, 1, 3}, true},  //23
+	{[]int{3, 2, 1}, true},  //24
+
+	{[]int{2, 3, 2, 4}, true},  //25
+	{[]int{1, 2, 4, 3}, true},  //26
+	{[]int{1, 4, 3, 2}, true},  //27
+	{[]int{1, 3, 4, 2}, false}, //28
+
+	{[]int{1, 5, 3, 3, 7}, true},  //29
+	{[]int{1, 3, 5, 3, 4}, false}, //30
+
+	{[]int{1, 5, 3, 3, 3, 3, 3, 3, 3, 3, 7}, true},                                                           //31
+	{[]int{1, 5, 3, 3, 3, 7, 3, 3, 3, 3, 7}, false},                                                          //32
+	{[]int{6, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7}, false},                                              //33
+	{[]int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7}, true},                                                              //34
+	{[]int{1, 2, 3, 3, 3, 3, 3, 3, 3, 7, 5}, true},                                                           //35
+	{[]int{7, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5}, false},                                                 //36
+	{[]int{2, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5}, false},                                              //37
+	{[]int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7}, true},                                                              //38
+	{[]int{1, 5, 3, 4, 7}, false},                                                                            //39
+	{[]int{3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1}, true},                                //40
+	{[]int{1, 1, 1, 3, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 1, 3, 3, 3}, false}, //41
+	{[]int{1, 1, 1, 3, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 1, 3, 3, 3}, false}, //42
+
+	{[]int{3, 1, 1, 2, 2, 3, 3, 1}, true},                                                   //43 f
+	{[]int{1, 1, 3, 1, 1, 2, 2, 3, 3, 1}, true},                                             //44 f
+	{[]int{1, 1, 1, 30, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 12, 24, 1, 50, 60}, true}, //45 f
+	{[]int{1, 1, 3, 1, 1, 2, 2, 3, 3, 1}, true},                                             //46 f
+	{[]int{3, 6, 3, 3, 3, 4, 4, 4, 5, 5, 5, 3, 6, 6, 7}, true},                              //47 f
 }
 
 func main() {
 
-	//total := 0
 	input := testData
-	for _, v := range input {
-		//fmt.Println("TEST", v.num)
-		if swapSort(v.in) == v.want {
-			fmt.Println("TEST", v.num, "TRUE:PASSED")
+	failed := 0
+	totaltests := 0
+
+	for i, v := range input {
+		//fmt.Println("")
+		if swapNcompare(v.in) == v.want {
+			fmt.Println("TEST", i, "PASS")
 		} else {
-			fmt.Println("TEST", v.num, "FAILLED")
+
+			fmt.Println("TEST", i, "!!FAIL!!")
+			failed++
 		}
+		totaltests++
 	}
+	fmt.Println("PASS:", totaltests-failed, "|", "Fail:", failed)
 }
 
-func swapSort(list []int) bool {
+func swapNcompare(list []int) bool {
 
 	if sort.IntsAreSorted(list) {
 		//Nothing to do, already sorted
@@ -64,54 +98,42 @@ func swapSort(list []int) bool {
 	copy(sortedList, list)
 	sort.Ints(sortedList)
 
-	// count any number that are duplicate or duplicates in a flush
-	dup := 0
+	oneSwapSort(list)
 
-	// while you check if current number is greater in value than next item in list
-	// if so check if number that are duplicate or duplicates in a flush
-	for i := 0; i < len(list)-1; i++ {
-		if list[i] > list[i+1] {
-			dup++
-			for k := i + 1; k < len(list)-1; k++ {
-				//fmt.Println(list[k], "==", list[k+1], "or", list[k]+1, "==", list[k+1], ":A")
-				if list[k] == list[k+1] || list[k]+1 == list[k+1] {
-					if list[i] == list[k+1] {
-						break
-					}
-					dup++
-				} else {
-					break
-				}
-			}
-			//store the value to swap
-			val := list[i]
-			//remove value from list
-			list = append(list[:i], list[i+1:]...)
-			//insert value at new location
-			list = insert(list, dup+i, val)
-			// compare lists, if not same more than one swap needed return false
-			fmt.Println(list, ":B:")
-			return compare(list, sortedList)
-		}
-	}
+	// compare if the same only one swap needed
+	return compare(list, sortedList)
 
-	//something went wrong as IntsAreSorted should of returned true
-	fmt.Println("ERR?:", list)
-	return true
-
-}
-
-func insert(s []int, at int, val int) []int {
-	// Make sure there is enough room
-	s = append(s, 0)
-	// Move all elements of s up one slot
-	copy(s[at+1:], s[at:])
-	// Insert the new element at the now free position
-	s[at] = val
-	//return the swapped element slice
-	return s
 }
 
 func compare(a []int, b []int) bool {
 	return reflect.DeepEqual(a, b)
+}
+
+func oneSwapSort(a []int) {
+	// pass in the slice and the current index, desending
+	for i := len(a) - 1; i >= 0; i-- {
+		pos := i
+		change := false
+
+		b := make([]int, len(a))
+		copy(b, a)
+
+		for pos > 0 && b[pos-1] == b[pos] {
+			pos--
+		}
+
+		for pos > 0 && b[pos-1] > b[pos] {
+			b[pos-1], b[pos] = b[pos], b[pos-1]
+			change = true
+			pos--
+
+		}
+
+		if change {
+			//fmt.Println("swap:", upperBound, a[upperBound], "with", pos, a[pos])
+			a[i], a[pos] = a[pos], a[i]
+			return
+		}
+	}
+
 }
