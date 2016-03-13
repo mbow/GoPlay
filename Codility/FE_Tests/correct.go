@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"reflect"
+	//"reflect"
 	"sort"
 )
 
@@ -59,11 +59,16 @@ var testData = []tests{
 	{[]int{1, 1, 1, 3, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 1, 3, 3, 3}, false}, //41
 	{[]int{1, 1, 1, 3, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 1, 3, 3, 3}, false}, //42
 
-	{[]int{3, 1, 1, 2, 2, 3, 3, 1}, true},                                                   //43 f
-	{[]int{1, 1, 3, 1, 1, 2, 2, 3, 3, 1}, true},                                             //44 f
-	{[]int{1, 1, 1, 30, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 12, 24, 1, 50, 60}, true}, //45 f
-	{[]int{1, 1, 3, 1, 1, 2, 2, 3, 3, 1}, true},                                             //46 f
-	{[]int{3, 6, 3, 3, 3, 4, 4, 4, 5, 5, 5, 3, 6, 6, 7}, true},                              //47 f
+	{[]int{3, 5, 7, 6, 9, 11}, true}, //43
+	{[]int{1, 4, 5, 6, 7, 2}, false}, //44
+	{[]int{1, 11, 5, 6, 7, 2}, true}, //45
+
+	{[]int{3, 1, 1, 2, 2, 3, 3, 1}, true},                                                   //46 f
+	{[]int{1, 1, 3, 1, 1, 2, 2, 3, 3, 1}, true},                                             //47 f
+	{[]int{1, 1, 3, 1, 1, 2, 2, 3, 3, 1}, true},                                             //48 f
+	{[]int{3, 6, 3, 3, 3, 4, 4, 4, 5, 5, 5, 3, 6, 6, 7}, true},                              //49 f
+	{[]int{1, 1, 1, 30, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 12, 24, 1, 50, 60}, true}, //50 f
+
 }
 
 func main() {
@@ -72,13 +77,10 @@ func main() {
 	failed := 0
 	totaltests := 0
 
-	for i, v := range input {
-		//fmt.Println("")
-		if swapNcompare(v.in) == v.want {
-			fmt.Println("TEST", i, "PASS")
+	for _, v := range input {
+		if canBeSortedByOneSwap(v.in) == v.want {
+			//fmt.Println("PASS")
 		} else {
-
-			fmt.Println("TEST", i, "!!FAIL!!")
 			failed++
 		}
 		totaltests++
@@ -86,6 +88,43 @@ func main() {
 	fmt.Println("PASS:", totaltests-failed, "|", "Fail:", failed)
 }
 
+func canBeSortedByOneSwap(list []int) bool {
+
+	if sort.IntsAreSorted(list) {
+		//Nothing to do, already sorted
+		return true
+	}
+
+	//Make a sorted list to compare
+	sortedList := make([]int, len(list))
+	copy(sortedList, list)
+	sort.Ints(sortedList)
+
+	//Counter for differences in list
+	diffCnt := 0
+
+	//compare each item against corect list and count missmatches
+	//if more than 2 differences, needs more than one swap so return
+	for i, v := range list {
+		if v != sortedList[i] {
+			diffCnt++
+			if diffCnt > 2 {
+				return false
+			}
+		}
+	}
+
+	// ret
+	if diffCnt == 2 {
+		return true
+	}
+
+	//catch case something went wrong
+	//fmt.Println("ERR") // return ERROR
+	return false
+}
+
+/* Old bubble sort with one  swap
 func swapNcompare(list []int) bool {
 
 	if sort.IntsAreSorted(list) {
@@ -97,9 +136,9 @@ func swapNcompare(list []int) bool {
 	sortedList := make([]int, len(list))
 	copy(sortedList, list)
 	sort.Ints(sortedList)
-
+	//fmt.Println(list, "[IN]")
 	oneSwapSort(list)
-
+	//fmt.Println(list, "[OUT]")
 	// compare if the same only one swap needed
 	return compare(list, sortedList)
 
@@ -113,27 +152,52 @@ func oneSwapSort(a []int) {
 	// pass in the slice and the current index, desending
 	for i := len(a) - 1; i >= 0; i-- {
 		pos := i
+		pos2 := 0
 		change := false
+		ran := false
 
 		b := make([]int, len(a))
 		copy(b, a)
 
+		//{[]int{1, 3, 3, 3, 4, 3, 3, 3, 3, 7}, true},
+		//fmt.Println(i, ":", a)
 		for pos > 0 && b[pos-1] == b[pos] {
+			//fmt.Println("pos--")
 			pos--
 		}
 
 		for pos > 0 && b[pos-1] > b[pos] {
+			//fmt.Println("swap0:", b, pos)
 			b[pos-1], b[pos] = b[pos], b[pos-1]
 			change = true
 			pos--
+			//fmt.Println("swap1:", b, pos)
+			pos2 = pos
+
+			for pos2 > 0 && b[pos2-1] == b[pos2] && b[pos2] != b[i] && ran != true {
+				//fmt.Println("swap2:", b, "@", pos2)
+				//b[pos2-1], b[pos2] = b[pos2], b[pos2-1]
+				pos2--
+				if pos2 > 0 && b[pos2-1] != b[pos2] {
+					ran = true
+					if pos2 > 0 && b[pos2-1] > b[pos2] {
+						//fmt.Println("swap3", pos2)
+						pos2--
+					}
+				}
+
+			}
 
 		}
 
 		if change {
-			//fmt.Println("swap:", upperBound, a[upperBound], "with", pos, a[pos])
-			a[i], a[pos] = a[pos], a[i]
+			//fmt.Println("swap:", i, a[i], "with", pos, a[pos])
+			//a[i], a[pos] = a[pos], a[i]
+			//fmt.Println("swap:", i, a[i], "with", pos2, a[pos2])
+			a[i], a[pos2] = a[pos2], a[i]
 			return
 		}
 	}
 
 }
+*/
